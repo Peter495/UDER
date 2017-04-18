@@ -4,7 +4,12 @@
     <!-- Shopping Cart action button, leads to Checkout Activity -->
     <item
         android:id="@+id/action_checkout"
-        android:icon="@drawable/cart"
+        android:icon="@drawable/ic_usercart"
         android:title="Checkout"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_filters"
+        android:icon="@drawable/ic_userfilter"
+        android:title="Filters"
+        app:showAsAction="ifRoom" />
 </menu>

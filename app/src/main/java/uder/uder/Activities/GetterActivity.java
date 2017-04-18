@@ -1,5 +1,6 @@
 package uder.uder.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.FragmentManager;
 import android.support.design.widget.NavigationView;
@@ -12,15 +13,19 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import uder.uder.HelperClasses.Milker_User;
 import uder.uder.R;
 
 public class GetterActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private CharSequence appBarTitle;
+    private Milker_User currentUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_getter);
+        currentUser = (Milker_User) getIntent().getSerializableExtra("user");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -32,6 +37,14 @@ public class GetterActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        appBarTitle = "Welcome " + currentUser.getfName();
+        setTitle(appBarTitle);
+    }
+    @Override
+    public void setTitle(CharSequence title) {
+        appBarTitle = title;
+        getSupportActionBar().setTitle(appBarTitle);
+
     }
 
     @Override
@@ -55,29 +68,44 @@ public class GetterActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item){
         switch(item.getItemId()){
             case R.id.action_jobMap:
-                AlertDialog.Builder jobMapAlert = new AlertDialog.Builder(GetterActivity.this);
-                jobMapAlert.setMessage("Active Job Button Clicked")
-                        .setNegativeButton("Exit", null)
-                        .create()
-                        .show();
+                if(currentUser.getCurrentOrder() == null){
+                    AlertDialog.Builder jobMapAlert = new AlertDialog.Builder(GetterActivity.this);
+                    jobMapAlert.setMessage("No Active Job!")
+                            .setNegativeButton("Exit", null)
+                            .create()
+                            .show();
+                }
+                else{
+                    Intent activeJobIntent = new Intent(this, ActiveJobActivity.class);
+                    activeJobIntent.putExtra("user", currentUser);
+                    this.startActivity(activeJobIntent);
+
+                }
                 return true;
         }
         return true;
 
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        FragmentManager fm = getFragmentManager();
 
         if (id == R.id.action_acct_mgmt) {
             // Account Management Fragment
         }
         else if (id == R.id.action_logout){
             // Logout Sequence
+            Intent logout = new Intent(this, LoginActivity.class);
+            currentUser = null;
+            this.startActivity(logout);
+        }
+        else if(id == R.id.action_list_orders){
+            Intent orderListIntent = new Intent(this, OrderListActivity.class);
+            orderListIntent.putExtra("user", currentUser);
+            this.startActivity(orderListIntent);
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
